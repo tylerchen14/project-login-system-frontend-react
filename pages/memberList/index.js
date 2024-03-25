@@ -25,7 +25,6 @@ export default function MemberList() {
   }, [router.query.page]
   )
 
-
   return (
     <Layout>
 
