@@ -1,0 +1,1 @@
+export const API_KEY = 'http://localhost:3003/member_content/api'
