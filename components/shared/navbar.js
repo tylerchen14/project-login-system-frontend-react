@@ -23,7 +23,7 @@ export default function Navbar() {
                 <Link className="nav-link active" aria-current="page" href="/memberList">會員名單</Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" href="#">Link</Link>
+                <Link className="nav-link" href="./memberList/add">新增會員</Link>
               </li>
             </ul>
           </div>

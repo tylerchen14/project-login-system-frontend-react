@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { API_KEY } from '@/components/config/api-path'
+import { API_SERVER } from '@/components/config/api-path'
 import { useRouter } from 'next/router'
 import Layout from '@/components/shared/layout'
 import Link from 'next/link'
@@ -8,15 +8,15 @@ export default function MemberList() {
 
   const router = useRouter()
 
-  const [list, setList] = useState([
-    rows = [],
-    success = false,
-    totalPage = 0,
-    page = 0
-  ])
+  const [list, setList] = useState({
+    rows: [],
+    success: false,
+    totalPage: 0,
+    page: 0
+  })
 
   useEffect(() => {
-    fetch(`${API_KEY}`)
+    fetch(`${API_SERVER}${location.search}`)
       .then(res => res.json())
       .then(result => {
         console.log(result)
@@ -70,9 +70,9 @@ export default function MemberList() {
               </tr>
             </thead>
             <tbody>
-              {list.map((v, i) => {
-                <tr>
-                  <th scope="row" key={i}>{v.user_id}</th>
+              {list.rows.map((v, i) => {
+                return <tr key={i}>
+                  <td>{v.user_id}</td>
                   <td>{v.name}</td>
                   <td>{v.email}</td>
                   <td>{v.birthday}</td>
