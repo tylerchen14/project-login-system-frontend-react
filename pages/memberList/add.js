@@ -5,14 +5,18 @@ import { API_SERVER_ADD } from '@/components/config/api-path'
 import { z } from 'zod'
 import { useRouter } from 'next/router'
 import styles from '@/styles/form.module.css'
+import dayjs from 'dayjs'
 
+// 判斷基準
 const checkName = z.string().min(2, { message: "至少輸入兩個字" })
 const checkEmail = z.string().email({ message: "請輸入正確的信箱格式" })
 
 export default function MBadd() {
 
+  // 建立router
   const router = useRouter()
 
+  // 資料預設
   const [mbInfo, setmbInfo] = useState({
     name: "",
     email: "",
@@ -20,25 +24,32 @@ export default function MBadd() {
     created_at: "",
   })
 
+  // 錯誤預設
   const [error, setError] = useState({
     name: "",
     email: "",
+    birthday: "",
     hasErrors: false,
   })
 
+  // 新增資料
   const handleChange = (e) => {
     setmbInfo({ ...mbInfo, [e.target.name]: e.target.value })
   }
 
+  // 傳出資料
   const handleSubmit = async (e) => {
     e.preventDefault()
 
+    // 錯誤判定與訊息
     let initError = {
       name: "",
       email: "",
+      birthday: "",
       hasErrors: false,
     }
 
+    // 判斷資料-姓名
     const rowName = checkName.safeParse(mbInfo.name)
     if (!rowName.success) {
 
@@ -49,6 +60,7 @@ export default function MBadd() {
       }
     }
 
+    // 判斷資料-信箱
     const rowEmail = checkEmail.safeParse(mbInfo.email)
     if (!rowEmail.success) {
       initError = {
@@ -58,11 +70,26 @@ export default function MBadd() {
       }
     }
 
+    // 判斷資料 -生日
+    let birthday = mbInfo.birthday
+    const timeFormat = "YYYY-MM-DD"
+
+    const b = dayjs(birthday, timeFormat, true)
+    if(!b.isValid()){
+      initError = {
+        ...initError,
+        hasErrors: true,
+        birthday: "必須填寫生日"
+      }
+    }
+
+    // 如果有錯，展示錯誤訊息
     if (initError.hasErrors) {
       setError(initError)
       return;
     }
 
+    // 連線資料庫，新增資料
     const r = await fetch(API_SERVER_ADD, {
       method: "POST",
       body: JSON.stringify(mbInfo),
@@ -72,15 +99,15 @@ export default function MBadd() {
     })
 
     const result = await r.json()
-    console.log({result});
+    console.log({ result });
 
+    // 如果資料新增成功，跳轉回列表頁
     if (result.success) {
       router.push('/memberList')
     } else {
       alert('資料出現錯誤')
     }
   }
-
 
   return (
     <Layout>
@@ -97,7 +124,7 @@ export default function MBadd() {
                   <input type="text" className="form-control" id="name" name="name"
                     value={mbInfo.name}
                     onChange={handleChange} />
-                  <div className="form-text"></div>
+                  <div className="form-text">{error.name}</div>
                 </div>
 
                 <div className={"mb-3 " + (error.email ? styles.error : "")}>
@@ -107,16 +134,16 @@ export default function MBadd() {
                     value={mbInfo.email}
                     onChange={handleChange}
                   />
-                  <div className="form-text"></div>
+                  <div className="form-text">{error.email}</div>
                 </div>
 
-                <div className="mb-3">
+                <div className={"mb-3 " + (error.birthday ? styles.error : "")}>
                   <span style={{ color: 'red' }}>*</span>
                   <label htmlFor="birthday" className="form-label">生日</label>
                   <input type="date" className="form-control" id="birthday" name="birthday"
                     value={mbInfo.birthday}
                     onChange={handleChange} />
-                  <div className="form-text"></div>
+                  <div className="form-text">{error.birthday}</div>
                 </div>
 
                 <div className="mb-3">

@@ -22,7 +22,7 @@ export default function MemberList() {
         console.log(result)
         setList(result)
       })
-  }, [router.query.page]
+  }, [router.query]
   )
 
   return (
