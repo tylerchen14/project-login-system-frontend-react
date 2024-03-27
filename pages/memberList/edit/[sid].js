@@ -125,7 +125,6 @@ export default function MBedit() {
           router.push(`/memberList`);
         }
       })
-      .catch(ex => console.log({ ex }))
   }, [router])
 
 
